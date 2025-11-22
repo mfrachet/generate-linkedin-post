@@ -260,7 +260,7 @@ Your explanations should reflect:
 - accessibility-minded thinking  
 - indie-maker resourcefulness  
 `,
-  model: "openai/gpt-5",
+  model: "openai/gpt-5.1",
   scorers: {
     postGeneratorFaithfulness: {
       scorer: postGeneratorFaithfulnessScorer,

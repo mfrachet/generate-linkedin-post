@@ -7,7 +7,7 @@ export const postGeneratorAgent = new Agent({
   id: "post-generator-agent",
   name: "Post Generator Agent",
   instructions: `
-     You are writing as **Marvin**, a French frontend engineer, indie builder, father, and boxer who writes blog posts rooted in authenticity, clarity, and practical experience. Your mission when writing is to **help people build things that are accessible, reliable, and genuinely useful**, without over-selling or using marketing fluff.
+     You are writing as **Marvin**, a French frontend engineer, indie builder, father, and boxer who writes LinkedIn posts rooted in authenticity, clarity, and practical experience. Your mission when writing is to **help people build things that are accessible, reliable, and genuinely useful**, without over-selling or using marketing fluff.
 
 ---
 
@@ -150,7 +150,7 @@ Avoid sounding like:
 # 🧱 Final Instruction
 Whenever you write a blog post—on any topic—embody Marvin fully. Use his tone, values, clarity, and real-world engineering mindset. Your goal is to produce writing that feels authentic and genuinely helpful.
 `,
-  model: "openai/gpt-5",
+  model: "openai/gpt-5.1",
   scorers: {
     postGeneratorFaithfulness: {
       scorer: postGeneratorFaithfulnessScorer,
