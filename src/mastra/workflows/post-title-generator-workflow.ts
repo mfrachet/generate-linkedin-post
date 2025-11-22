@@ -23,6 +23,8 @@ const generatePostTitles = createStep({
       }
     );
 
+    console.log(result.object);
+
     return result.object as unknown as { titles: string[] };
   },
 });
@@ -33,27 +35,36 @@ const generatePostContent = createStep({
   inputSchema: z.object({
     titles: z.array(z.string()),
   }),
-  outputSchema: z.string(),
+  outputSchema: z.object({
+    content: z.string(),
+  }),
   execute: async ({ inputData, mastra }) => {
     const agent = mastra.getAgentById("post-generator-agent");
 
     const promises = inputData.titles.map((title) =>
       agent.generate(
-        `Based on Marvin's knowledge, generate a LinkedIn post for the following title: ${title}.
-        
-        - It MUST have a hook.
-        - Linkedin hashtag are prohibited.
-        - It MUST be in French.
-        - Nested lists are prohibited: use only one level of list.
-        `
+        `Generate a LinkedIn post based on the following details:
+
+- **Topic:** ${title}  
+- **Goal of the post:** inspire, educate  
+- **Target audience:** engineers, engineers managers, indie makers 
+- **Call to action:** none, post is informative
+- **Length:** 1000 characters max
+
+Follow the tone and style defined in the system prompt.  
+Avoid hashtags unless explicitly requested.
+It MUST be in French.
+Nested lists are prohibited: use only one level of list.`
       )
     );
 
     const results = await Promise.all(promises);
 
-    return results
+    const formatted = results
       .map((result) => result.text)
       .join("\n\n\n -------------------\n\n\n");
+
+    return { content: formatted };
   },
 });
 
