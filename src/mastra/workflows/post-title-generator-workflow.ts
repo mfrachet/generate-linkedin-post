@@ -23,8 +23,6 @@ const generatePostTitles = createStep({
       }
     );
 
-    console.log(result.object);
-
     return result.object as unknown as { titles: string[] };
   },
 });
@@ -35,9 +33,7 @@ const generatePostContent = createStep({
   inputSchema: z.object({
     titles: z.array(z.string()),
   }),
-  outputSchema: z.object({
-    content: z.string(),
-  }),
+  outputSchema: z.string(),
   execute: async ({ inputData, mastra }) => {
     const agent = mastra.getAgentById("post-generator-agent");
 
@@ -60,11 +56,9 @@ Nested lists are prohibited: use only one level of list.`
 
     const results = await Promise.all(promises);
 
-    const formatted = results
+    return results
       .map((result) => result.text)
       .join("\n\n\n -------------------\n\n\n");
-
-    return { content: formatted };
   },
 });
 
