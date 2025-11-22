@@ -9,7 +9,6 @@ import { mastra } from "..";
 export const gitRepoSummerizer = createTool({
   id: "Git Repo Summerizer",
   inputSchema: z.object({
-    username: z.string(),
     repoOwner: z.string(),
     repoName: z.string(),
     since: z.string().describe("Iso string date"),
@@ -17,16 +16,19 @@ export const gitRepoSummerizer = createTool({
   outputSchema: z.string(),
   description: `Fetches the commits by a given user since a given date`,
   execute: async (args) => {
-    console.log(args);
-    const { username, repoOwner, repoName, since } = args;
+    const { repoOwner, repoName, since } = args;
     const logger = mastra.getLogger();
     const git = simpleGit();
 
     logger.info(`[${repoName}] Cloning shallow repo...`);
 
-    const cloneDir = path.join(".", `repo-${Date.now()}`);
+    const cloneDir = path.join(process.cwd(), `repo-${Date.now()}`);
 
-    const USER = username;
+    const repoPath = path.join(process.cwd(), `repo-${Date.now()}`);
+
+    logger.info(`[${repoName}] Repo path: ${repoPath}`);
+
+    const USER = "mfrachet";
     const PASS = process.env.GITHUB_TOKEN;
     const REPO = `github.com/${repoOwner}/${repoName}.git`;
 
@@ -36,11 +38,13 @@ export const gitRepoSummerizer = createTool({
     const repoGit = simpleGit(cloneDir);
     // const since = new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString();
 
-    logger.info(`[${repoName}] Getting commits by ${username} since ${since}`);
+    logger.info(
+      `[${repoName}] Getting commits by Marvin Frachet since ${since}`
+    );
 
     const log = await repoGit.log({
       "--since": since,
-      "--author": username,
+      "--author": "Marvin Frachet",
     });
 
     if (!log.all.length) {
@@ -73,7 +77,7 @@ export const gitRepoSummerizer = createTool({
       };
 
       for (const file of filePaths) {
-        if (file.endsWith("lock.yaml")) {
+        if (file.endsWith("lock.yaml") || file.endsWith(".md")) {
           continue;
         }
 
