@@ -32,14 +32,13 @@ const generatePostContent = createStep({
   id: "generate-post-content",
   description: "Generates post content from agent's knowledge base",
   inputSchema: z.object({
-    "generate-post-titles": z.object({ titles: z.array(z.string()) }),
-    "github-repo-summerizer": z.string(),
+    titles: z.array(z.string()),
   }),
   outputSchema: z.string(),
   execute: async ({ inputData, mastra }) => {
     const agent = mastra.getAgentById("post-generator-agent");
 
-    const promises = inputData["generate-post-titles"].titles.map((title) =>
+    const promises = inputData.titles.map((title) =>
       agent.generate(
         `Generate a LinkedIn post based on the following details:
 
@@ -48,7 +47,6 @@ const generatePostContent = createStep({
 - **Target audience:** engineers, engineers managers, indie makers 
 - **Call to action:** none, post is informative
 - **Length:** 1000 characters max
-- **Github summary for the past 3 weeks (optional):** ${inputData["github-repo-summerizer"]}
 
 Follow the tone and style defined in the system prompt.  
 Avoid hashtags unless explicitly requested.
@@ -65,23 +63,23 @@ Nested lists are prohibited: use only one level of list.`
   },
 });
 
-const githubRepoSummerizer = createStep({
-  id: "github-repo-summerizer",
-  description: "Summarizes a GitHub repository",
-  inputSchema: z.object({
-    count: z.number().describe("Number of posts to generate"),
-  }),
-  outputSchema: z.string(),
-  execute: async () => {
-    const result = await gitRepoSummerizer.execute({
-      repoOwner: "mastra-ai",
-      repoName: "mastra",
-      since: "3 weeks ago",
-    });
+// const githubRepoSummerizer = createStep({
+//   id: "github-repo-summerizer",
+//   description: "Summarizes a GitHub repository",
+//   inputSchema: z.object({
+//     count: z.number().describe("Number of posts to generate"),
+//   }),
+//   outputSchema: z.string(),
+//   execute: async () => {
+//     const result = await gitRepoSummerizer.execute({
+//       repoOwner: "mastra-ai",
+//       repoName: "mastra",
+//       since: "3 weeks ago",
+//     });
 
-    return result as string;
-  },
-});
+//     return result as string;
+//   },
+// });
 
 const postTitleGeneratorWorkflow = createWorkflow({
   id: "post-title-generator-workflow",
@@ -90,7 +88,7 @@ const postTitleGeneratorWorkflow = createWorkflow({
   }),
   outputSchema: z.string(),
 })
-  .parallel([generatePostTitles, githubRepoSummerizer])
+  .then(generatePostTitles)
   .then(generatePostContent);
 
 postTitleGeneratorWorkflow.commit();
