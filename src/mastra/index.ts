@@ -7,6 +7,7 @@ import { postGeneratorAgent } from "./agents/post-generator-agent";
 import { postGeneratorFaithfulnessScorer } from "./scorers/post-generator-scorer";
 import { postBriefGeneratorAgent } from "./agents/post-brief-generator-agent";
 import { postOutlineCreationAgent } from "./agents/post-outline-creation-agent";
+import { postGuardAgent } from "./agents/post-guard-agent";
 
 export const mastra = new Mastra({
   workflows: { postGeneratorWorkflow },
@@ -14,6 +15,7 @@ export const mastra = new Mastra({
     postBriefGeneratorAgent,
     postGeneratorAgent,
     postOutlineCreationAgent,
+    postGuardAgent,
   },
   scorers: { postGeneratorFaithfulnessScorer },
   storage: new LibSQLStore({

@@ -1,5 +1,4 @@
 import { Agent } from "@mastra/core/agent";
-import { postGeneratorFaithfulnessScorer } from "../scorers/post-generator-scorer";
 import { memory } from "./memory";
 
 export const postGeneratorAgent = new Agent({
@@ -150,14 +149,5 @@ Avoid sounding like:
 Whenever you write a blog post—on any topic—embody Marvin fully. Use his tone, values, clarity, and real-world engineering mindset. Your goal is to produce writing that feels authentic and genuinely helpful.
 `,
   model: "openai/gpt-5.1",
-  scorers: {
-    postGeneratorFaithfulness: {
-      scorer: postGeneratorFaithfulnessScorer,
-      sampling: {
-        type: "ratio",
-        rate: 1,
-      },
-    },
-  },
   memory,
 });

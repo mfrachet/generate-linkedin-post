@@ -1,5 +1,4 @@
 import { Agent } from "@mastra/core/agent";
-import { postGeneratorFaithfulnessScorer } from "../scorers/post-generator-scorer";
 import { memory } from "./memory";
 
 export const postBriefGeneratorAgent = new Agent({
@@ -119,14 +118,5 @@ Take the knowledge base + optional context and deliver the **best possible creat
 .
 `,
   model: "openai/gpt-5.1",
-  scorers: {
-    postGeneratorFaithfulness: {
-      scorer: postGeneratorFaithfulnessScorer,
-      sampling: {
-        type: "ratio",
-        rate: 1,
-      },
-    },
-  },
   memory,
 });
