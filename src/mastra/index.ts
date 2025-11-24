@@ -4,10 +4,11 @@ import { LibSQLStore } from "@mastra/libsql";
 import { Observability } from "@mastra/observability";
 import { postGeneratorWorkflow } from "./workflows/post-generator-workflow";
 import { postGeneratorAgent } from "./agents/post-generator-agent";
-import { postGeneratorFaithfulnessScorer } from "./scorers/post-generator-scorer";
+
 import { postBriefGeneratorAgent } from "./agents/post-brief-generator-agent";
 import { postOutlineCreationAgent } from "./agents/post-outline-creation-agent";
 import { postGuardAgent } from "./agents/post-guard-agent";
+import { editorInChiefScorer } from "./scorers/editor-in-chief";
 
 export const mastra = new Mastra({
   workflows: { postGeneratorWorkflow },
@@ -17,7 +18,7 @@ export const mastra = new Mastra({
     postOutlineCreationAgent,
     postGuardAgent,
   },
-  scorers: { postGeneratorFaithfulnessScorer },
+  scorers: { editorInChiefScorer },
   storage: new LibSQLStore({
     id: "mastra-storage",
     // stores observability, scores, ... into memory storage, if it needs to persist, change to file:../mastra.db

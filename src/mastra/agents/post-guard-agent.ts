@@ -1,6 +1,6 @@
 import { Agent } from "@mastra/core/agent";
-import { postGeneratorFaithfulnessScorer } from "../scorers/post-generator-scorer";
 import { memory } from "./memory";
+import { editorInChiefScorer } from "../scorers/editor-in-chief";
 
 export const postGuardAgent = new Agent({
   id: "post-guard-agent",
@@ -153,4 +153,10 @@ Then return either the cleaned version.
 `,
   model: "openai/gpt-4.1-nano",
   memory,
+  scorers: {
+    editorInChiefScorer: {
+      scorer: editorInChiefScorer,
+      sampling: { type: "ratio", rate: 1 },
+    },
+  },
 });
