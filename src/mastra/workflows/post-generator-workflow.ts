@@ -1,30 +1,29 @@
 import { createStep, createWorkflow } from "@mastra/core/workflows";
 import { z } from "zod";
-import { gitRepoSummerizer } from "../tools/git-summerizer";
 
-const generatePostTitles = createStep({
-  id: "generate-post-titles",
-  description: "Generates post titles from agent's knowledge base",
+const generatePostIdea = createStep({
+  id: "generate-post-idea",
+  description: "Generates post idea from agent's knowledge base",
   inputSchema: z.object({
     count: z.number().describe("Number of posts to generate"),
   }),
   outputSchema: z.object({
-    titles: z.array(z.string()),
+    briefs: z.array(z.string()),
   }),
   execute: async ({ inputData, mastra }) => {
-    const agent = mastra.getAgentById("post-generator-agent");
+    const agent = mastra.getAgentById("post-brief-generator-agent");
     const result = await agent.generate(
-      `Based on Marvin's knowledge, generate ${inputData.count} LinkedIn post summaries so that the next LLM can generate the post content. Must be in French`,
+      `Generate ${inputData.count} LinkedIn post briefs based on your knowledge. Must be in French`,
       {
         structuredOutput: {
           schema: z.object({
-            titles: z.array(z.string()),
+            briefs: z.array(z.string()),
           }),
         },
       }
     );
 
-    return result.object as unknown as { titles: string[] };
+    return result.object as unknown as { briefs: string[] };
   },
 });
 
@@ -32,17 +31,17 @@ const generatePostContent = createStep({
   id: "generate-post-content",
   description: "Generates post content from agent's knowledge base",
   inputSchema: z.object({
-    titles: z.array(z.string()),
+    briefs: z.array(z.string()),
   }),
   outputSchema: z.string(),
   execute: async ({ inputData, mastra }) => {
     const agent = mastra.getAgentById("post-generator-agent");
 
-    const promises = inputData.titles.map((title) =>
+    const promises = inputData.briefs.map((brief) =>
       agent.generate(
         `Generate a LinkedIn post based on the following details:
 
-- **Topic:** ${title}  
+- **Brief:** ${brief}  
 - **Goal of the post:** inspire, educate  
 - **Target audience:** engineers, engineers managers, indie makers 
 - **Call to action:** none, post is informative
@@ -81,16 +80,16 @@ Nested lists are prohibited: use only one level of list.`
 //   },
 // });
 
-const postTitleGeneratorWorkflow = createWorkflow({
-  id: "post-title-generator-workflow",
+const postGeneratorWorkflow = createWorkflow({
+  id: "post-generator-workflow",
   inputSchema: z.object({
     count: z.number().describe("Number of posts to generate"),
   }),
   outputSchema: z.string(),
 })
-  .then(generatePostTitles)
+  .then(generatePostIdea)
   .then(generatePostContent);
 
-postTitleGeneratorWorkflow.commit();
+postGeneratorWorkflow.commit();
 
-export { postTitleGeneratorWorkflow };
+export { postGeneratorWorkflow };

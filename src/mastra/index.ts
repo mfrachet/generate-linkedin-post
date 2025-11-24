@@ -2,14 +2,14 @@ import { Mastra } from "@mastra/core/mastra";
 import { PinoLogger } from "@mastra/loggers";
 import { LibSQLStore } from "@mastra/libsql";
 import { Observability } from "@mastra/observability";
-import { postTitleGeneratorWorkflow } from "./workflows/post-title-generator-workflow";
+import { postGeneratorWorkflow } from "./workflows/post-generator-workflow";
 import { postGeneratorAgent } from "./agents/post-generator-agent";
 import { postGeneratorFaithfulnessScorer } from "./scorers/post-generator-scorer";
-import { postTitleGeneratorAgent } from "./agents/post-title-generator-agent";
+import { postBriefGeneratorAgent } from "./agents/post-brief-generator-agent";
 
 export const mastra = new Mastra({
-  workflows: { postTitleGeneratorWorkflow },
-  agents: { postTitleGeneratorAgent, postGeneratorAgent },
+  workflows: { postGeneratorWorkflow },
+  agents: { postBriefGeneratorAgent, postGeneratorAgent },
   scorers: { postGeneratorFaithfulnessScorer },
   storage: new LibSQLStore({
     id: "mastra-storage",
