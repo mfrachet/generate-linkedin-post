@@ -27,30 +27,45 @@ const generatePostIdea = createStep({
   },
 });
 
+const generatePostOutline = createStep({
+  id: "generate-post-outline",
+  description: "Generates post outline from agent's knowledge base",
+  inputSchema: z.object({
+    briefs: z.array(z.string()),
+  }),
+  outputSchema: z.object({
+    outlines: z.array(z.string()),
+  }),
+  execute: async ({ inputData, mastra }) => {
+    const agent = mastra.getAgentById("post-outline-creation-agent");
+
+    const promises = inputData.briefs.map((brief) =>
+      agent.generate(
+        `Generate a LinkedIn post outline based on the following brief: ${brief}`
+      )
+    );
+
+    const results = await Promise.all(promises);
+
+    const outlines = results.map((result) => result.text);
+
+    return { outlines };
+  },
+});
+
 const generatePostContent = createStep({
   id: "generate-post-content",
   description: "Generates post content from agent's knowledge base",
   inputSchema: z.object({
-    briefs: z.array(z.string()),
+    outlines: z.array(z.string()),
   }),
   outputSchema: z.string(),
   execute: async ({ inputData, mastra }) => {
     const agent = mastra.getAgentById("post-generator-agent");
 
-    const promises = inputData.briefs.map((brief) =>
+    const promises = inputData.outlines.map((outline) =>
       agent.generate(
-        `Generate a LinkedIn post based on the following details:
-
-- **Brief:** ${brief}  
-- **Goal of the post:** inspire, educate  
-- **Target audience:** engineers, engineers managers, indie makers 
-- **Call to action:** none, post is informative
-- **Length:** 1000 characters max
-
-Follow the tone and style defined in the system prompt.  
-Avoid hashtags unless explicitly requested.
-It MUST be in French.
-Nested lists are prohibited: use only one level of list.`
+        `Generate a LinkedIn post based on the following outline: ${outline}`
       )
     );
 
@@ -88,6 +103,7 @@ const postGeneratorWorkflow = createWorkflow({
   outputSchema: z.string(),
 })
   .then(generatePostIdea)
+  .then(generatePostOutline)
   .then(generatePostContent);
 
 postGeneratorWorkflow.commit();
