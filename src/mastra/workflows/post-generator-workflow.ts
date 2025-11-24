@@ -77,6 +77,22 @@ const generatePostContent = createStep({
   },
 });
 
+const postGuard = createStep({
+  id: "post-guard",
+  description: "Guards post content from agent's knowledge base",
+  inputSchema: z.string(),
+  outputSchema: z.string(),
+  execute: async ({ inputData, mastra }) => {
+    const agent = mastra.getAgentById("post-guard-agent");
+
+    const result = await agent.generate(
+      `Guard the following post content: ${inputData}`
+    );
+
+    return result.text;
+  },
+});
+
 // const githubRepoSummerizer = createStep({
 //   id: "github-repo-summerizer",
 //   description: "Summarizes a GitHub repository",
@@ -104,7 +120,8 @@ const postGeneratorWorkflow = createWorkflow({
 })
   .then(generatePostIdea)
   .then(generatePostOutline)
-  .then(generatePostContent);
+  .then(generatePostContent)
+  .then(postGuard);
 
 postGeneratorWorkflow.commit();
 
