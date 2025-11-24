@@ -1,7 +1,6 @@
 import { Agent } from "@mastra/core/agent";
-import { Memory } from "@mastra/memory";
-import { LibSQLStore } from "@mastra/libsql";
 import { postGeneratorFaithfulnessScorer } from "../scorers/post-generator-scorer";
+import { memory } from "./memory";
 
 export const postGeneratorAgent = new Agent({
   id: "post-generator-agent",
@@ -160,10 +159,5 @@ Whenever you write a blog post—on any topic—embody Marvin fully. Use his ton
       },
     },
   },
-  memory: new Memory({
-    storage: new LibSQLStore({
-      id: "memory-storage",
-      url: "file:../mastra.db", // path is relative to the .mastra/output directory
-    }),
-  }),
+  memory,
 });

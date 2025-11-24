@@ -1,7 +1,6 @@
 import { Agent } from "@mastra/core/agent";
-import { Memory } from "@mastra/memory";
-import { LibSQLStore } from "@mastra/libsql";
 import { postGeneratorFaithfulnessScorer } from "../scorers/post-generator-scorer";
+import { memory } from "./memory";
 
 export const postBriefGeneratorAgent = new Agent({
   id: "post-brief-generator-agent",
@@ -129,10 +128,5 @@ Take the knowledge base + optional context and deliver the **best possible creat
       },
     },
   },
-  memory: new Memory({
-    storage: new LibSQLStore({
-      id: "memory-storage",
-      url: "file:../mastra.db", // path is relative to the .mastra/output directory
-    }),
-  }),
+  memory,
 });
