@@ -2,6 +2,7 @@ import { createStep, createWorkflow } from "@mastra/core/workflows";
 import { z } from "zod";
 import { generatePostContentWorkflow } from "./generate-post-content-workflow";
 import { userBriefPrompt } from "../prompts/user-brief-prompt";
+import { userOutlinePrompt } from "../prompts/user-outline-prompt";
 
 const generatePostIdea = createStep({
   id: "generate-post-idea",
@@ -31,10 +32,7 @@ const generatePostOutline = createStep({
   }),
   execute: async ({ inputData, mastra }) => {
     const agent = mastra.getAgentById("post-outline-creation-agent");
-
-    const result = await agent.generate(
-      `Generate a LinkedIn post outline based on the following brief: ${inputData.brief}`
-    );
+    const result = await agent.generate(userOutlinePrompt(inputData.brief));
 
     return { outline: result.text };
   },
