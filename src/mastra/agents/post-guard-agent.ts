@@ -68,20 +68,7 @@ A single plain text draft (outline or full post).
 OUTPUT
 ------------------------------------------------------------
 
-Return **plain text only** in one of the following formats:
-
-1. If the draft is safe and aligned:
-   → Output the cleaned/improved version.
-
-2. If issues exist:
-   → Output:
-     Warnings:
-     - issue 1
-     - issue 2
-     - ...
-     
-     Cleaned Version:
-     <corrected draft>
+Return **plain text only**.
 
 No markdown, no JSON, no code fences.
 

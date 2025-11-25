@@ -86,7 +86,7 @@ const postGuard = createStep({
     const agent = mastra.getAgentById("post-guard-agent");
 
     const result = await agent.generate(
-      `Guard the following post content: ${inputData}`
+      `Review and ensure safety and clarity of the following post: ${inputData}`
     );
 
     return result.text;
