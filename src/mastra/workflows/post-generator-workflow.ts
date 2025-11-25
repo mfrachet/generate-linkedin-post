@@ -1,26 +1,20 @@
 import { createStep, createWorkflow } from "@mastra/core/workflows";
 import { z } from "zod";
 import { generatePostContentWorkflow } from "./generate-post-content-workflow";
+import { userBriefPrompt } from "../prompts/user-brief-prompt";
 
 const generatePostIdea = createStep({
   id: "generate-post-idea",
   description: "Generates post idea from agent's knowledge base",
-  inputSchema: z.object({}),
+  inputSchema: z.object({
+    idea: z.string(),
+  }),
   outputSchema: z.object({
     brief: z.string(),
   }),
-  execute: async ({ mastra }) => {
+  execute: async ({ inputData, mastra }) => {
     const agent = mastra.getAgentById("post-brief-generator-agent");
-    const result = await agent.generate(
-      `Generate a LinkedIn post brief based on your knowledge. Must be in French`,
-      {
-        structuredOutput: {
-          schema: z.object({
-            brief: z.string(),
-          }),
-        },
-      }
-    );
+    const result = await agent.generate(userBriefPrompt(inputData.idea));
 
     return result.object as unknown as { brief: string };
   },
