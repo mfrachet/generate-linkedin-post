@@ -9,9 +9,10 @@ import { postBriefGeneratorAgent } from "./agents/post-brief-generator-agent";
 import { postOutlineCreationAgent } from "./agents/post-outline-creation-agent";
 import { postGuardAgent } from "./agents/post-guard-agent";
 import { editorInChiefScorer } from "./scorers/editor-in-chief";
+import { generatePostContentWorkflow } from "./workflows/generate-post-content-workflow";
 
 export const mastra = new Mastra({
-  workflows: { postGeneratorWorkflow },
+  workflows: { postGeneratorWorkflow, generatePostContentWorkflow },
   agents: {
     postBriefGeneratorAgent,
     postGeneratorAgent,
