@@ -1,6 +1,7 @@
 import { createStep, createWorkflow } from "@mastra/core/workflows";
 import { z } from "zod";
 import { userPostPrompt } from "../prompts/user-post-prompt";
+import { postGuardPrompt } from "../prompts/post-guard-prompt";
 
 const generatePostContent = createStep({
   id: "generate-post-content",
@@ -26,9 +27,7 @@ const postGuard = createStep({
   execute: async ({ inputData, mastra }) => {
     const agent = mastra.getAgentById("post-guard-agent");
 
-    const result = await agent.generate(
-      `Review and ensure safety and clarity of the following post: ${inputData}`
-    );
+    const result = await agent.generate(postGuardPrompt(inputData));
 
     return result.text;
   },
