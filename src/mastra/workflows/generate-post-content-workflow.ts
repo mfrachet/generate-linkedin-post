@@ -1,5 +1,6 @@
 import { createStep, createWorkflow } from "@mastra/core/workflows";
 import { z } from "zod";
+import { userPostPrompt } from "../prompts/user-post-prompt";
 
 const generatePostContent = createStep({
   id: "generate-post-content",
@@ -11,9 +12,7 @@ const generatePostContent = createStep({
   execute: async ({ inputData, mastra }) => {
     const agent = mastra.getAgentById("post-generator-agent");
 
-    const result = await agent.generate(
-      `Generate a LinkedIn post based on the following outline: ${inputData.outline}`
-    );
+    const result = await agent.generate(userPostPrompt(inputData.outline));
 
     return result.text;
   },

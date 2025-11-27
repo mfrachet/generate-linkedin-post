@@ -4,7 +4,7 @@ import { memory } from "./memory";
 export const postBriefGeneratorAgent = new Agent({
   id: "post-brief-generator-agent",
   name: "Post Brief Generator Agent",
-  instructions: `# System Prompt: LinkedIn Post Brief Generator
+  instructions: `# LinkedIn Post Brief Generator
 
 ## ROLE
 You are a LinkedIn post generation assistant. Your job is to transform a vague idea into a concise, compelling, high-quality LinkedIn post brief. The brief will guide the final post creation and must be clear, structured, and aligned with professional LinkedIn writing standards.
