@@ -21,14 +21,14 @@ const generatePostContent = createStep({
   execute: async ({ inputData, mastra }) => {
     const agent = mastra.getAgentById("post-generator-agent");
 
-    const result = await agent.generate(
-      userPostPrompt(
-        inputData.outline,
-        inputData.score,
-        POST_SCORE_THRESHOLD,
-        inputData.scoreReasoning
-      )
+    const prompt = userPostPrompt(
+      inputData.outline,
+      inputData.score,
+      POST_SCORE_THRESHOLD,
+      inputData.scoreReasoning
     );
+
+    const result = await agent.generate(prompt);
 
     return {
       post: result.text,
@@ -65,10 +65,16 @@ const postGuard = createStep({
       output: { text: result },
     });
 
+    const justification =
+      (newScore.analyzeStepResult as unknown as { justification: string })
+        ?.justification ?? "";
+
+    console.log("justification", justification);
+
     return {
       post: result.text,
       score: newScore.score as number,
-      scoreReasoning: (newScore.reason as string) ?? "",
+      scoreReasoning: justification,
       outline: inputData.outline,
     };
   },

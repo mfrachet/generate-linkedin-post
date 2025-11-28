@@ -17,7 +17,7 @@ export const userPostPrompt = (
 ) => `
 ${userCtx}
 
-${score < scoreThreshold ? scoreReasoningPrompt(score, scoreReasoning) : ""}
+${score > 0 && score < scoreThreshold ? scoreReasoningPrompt(score, scoreReasoning) : ""}
 
 ## 🎯 Your Job
 Using the outline I provide:

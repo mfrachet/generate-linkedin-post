@@ -3,8 +3,6 @@ import { userCtx } from "./user-ctx";
 export const postGuardPrompt = (post: string) => `
 ${userCtx}
 
-
-
 ## Your job:
 - Improve the content only where needed
 - Keep the meaning identical
