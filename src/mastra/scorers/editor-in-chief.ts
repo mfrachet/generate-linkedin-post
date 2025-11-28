@@ -19,7 +19,7 @@ export const editorInChiefScorer = createScorer({
     }),
 
     createPrompt: ({ run, results }) => {
-      const toEvaluate = run.output[0].content.content;
+      const toEvaluate = run.output.text.text;
 
       return `You are the **EDITOR-IN-CHIEF** for Marvin’s content.
 

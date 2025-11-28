@@ -13,6 +13,7 @@ const generatePostContent = createStep({
     scoreReasoning: z.string().optional().default(""),
   }),
   outputSchema: z.object({
+    outline: z.string(),
     post: z.string(),
     score: z.number(),
     scoreReasoning: z.string(),
@@ -26,6 +27,7 @@ const generatePostContent = createStep({
       post: result.text,
       score: inputData.score ?? 0,
       scoreReasoning: inputData.scoreReasoning ?? "",
+      outline: inputData.outline,
     };
   },
 });
@@ -34,17 +36,20 @@ const postGuard = createStep({
   id: "post-guard",
   description: "Guards post content from agent's knowledge base",
   inputSchema: z.object({
+    outline: z.string(),
     post: z.string(),
     score: z.number(),
     scoreReasoning: z.string(),
   }),
   outputSchema: z.object({
+    outline: z.string(),
     post: z.string(),
     score: z.number(),
     scoreReasoning: z.string(),
   }),
   execute: async ({ inputData, mastra }) => {
     const agent = mastra.getAgentById("post-guard-agent");
+    const scorer = mastra.getScorerById("editor-in-chief-scorer");
 
     const result = await agent.generate(
       postGuardPrompt(
@@ -55,10 +60,16 @@ const postGuard = createStep({
       )
     );
 
+    const newScore = await scorer.run({
+      input: [{ role: "user", content: inputData.post }],
+      output: { text: result },
+    });
+
     return {
       post: result.text,
-      score: inputData.score,
-      scoreReasoning: inputData.scoreReasoning,
+      score: newScore.score as number,
+      scoreReasoning: (newScore.reason as string) ?? "",
+      outline: inputData.outline,
     };
   },
 });
@@ -71,6 +82,7 @@ const generatePostContentWorkflow = createWorkflow({
     scoreReasoning: z.string().optional().default(""),
   }),
   outputSchema: z.object({
+    outline: z.string(),
     post: z.string(),
     score: z.number(),
   }),

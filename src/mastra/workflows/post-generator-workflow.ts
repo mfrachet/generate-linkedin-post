@@ -18,7 +18,7 @@ const generatePostIdea = createStep({
     const agent = mastra.getAgentById("post-brief-generator-agent");
     const result = await agent.generate(userBriefPrompt(inputData.idea));
 
-    return result.object as unknown as { brief: string };
+    return { brief: result.text };
   },
 });
 
@@ -41,7 +41,9 @@ const generatePostOutline = createStep({
 
 const postGeneratorWorkflow = createWorkflow({
   id: "post-generator-workflow",
-  inputSchema: z.object({}),
+  inputSchema: z.object({
+    idea: z.string(),
+  }),
   outputSchema: z.string(),
 })
   .then(generatePostIdea)

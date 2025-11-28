@@ -1,6 +1,5 @@
 import { Agent } from "@mastra/core/agent";
 import { memory } from "./memory";
-import { editorInChiefScorer } from "../scorers/editor-in-chief";
 
 export const postGuardAgent = new Agent({
   id: "post-guard-agent",
@@ -96,10 +95,4 @@ Your entire response must be:
 `,
   model: "openai/gpt-5.1",
   memory,
-  scorers: {
-    editorInChiefScorer: {
-      scorer: editorInChiefScorer,
-      sampling: { type: "ratio", rate: 1 },
-    },
-  },
 });
