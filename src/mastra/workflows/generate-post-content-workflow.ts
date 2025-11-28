@@ -8,28 +8,38 @@ const generatePostContent = createStep({
   description: "Generates post content from agent's knowledge base",
   inputSchema: z.object({
     outline: z.string(),
+    score: z.number().optional().default(0),
   }),
-  outputSchema: z.string(),
+  outputSchema: z.object({
+    post: z.string(),
+    score: z.number(),
+  }),
   execute: async ({ inputData, mastra }) => {
     const agent = mastra.getAgentById("post-generator-agent");
 
     const result = await agent.generate(userPostPrompt(inputData.outline));
 
-    return result.text;
+    return { post: result.text, score: inputData.score ?? 0 };
   },
 });
 
 const postGuard = createStep({
   id: "post-guard",
   description: "Guards post content from agent's knowledge base",
-  inputSchema: z.string(),
-  outputSchema: z.string(),
+  inputSchema: z.object({
+    post: z.string(),
+    score: z.number(),
+  }),
+  outputSchema: z.object({
+    post: z.string(),
+    score: z.number(),
+  }),
   execute: async ({ inputData, mastra }) => {
     const agent = mastra.getAgentById("post-guard-agent");
 
-    const result = await agent.generate(postGuardPrompt(inputData));
+    const result = await agent.generate(postGuardPrompt(inputData.post));
 
-    return result.text;
+    return { post: result.text, score: inputData.score };
   },
 });
 
@@ -37,8 +47,12 @@ const generatePostContentWorkflow = createWorkflow({
   id: "generate-post-content-workflow",
   inputSchema: z.object({
     outline: z.string(),
+    score: z.number().optional().default(0),
   }),
-  outputSchema: z.string(),
+  outputSchema: z.object({
+    post: z.string(),
+    score: z.number(),
+  }),
 })
   .then(generatePostContent)
   .then(postGuard);
