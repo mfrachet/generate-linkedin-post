@@ -1,7 +1,23 @@
 import { userCtx } from "./user-ctx";
 
-export const postGuardPrompt = (post: string) => `
+const scoreReasoningPrompt = (score: number, scoreReasoning: string) => `
+## Score
+
+The content score is ${score} and should be as close to 1 as possible.
+
+The score reasoning is:
+${scoreReasoning}
+`;
+
+export const postGuardPrompt = (
+  post: string,
+  score: number,
+  scoreThreshold: number,
+  scoreReasoning: string
+) => `
 ${userCtx}
+
+${score < scoreThreshold ? scoreReasoningPrompt(score, scoreReasoning) : ""}
 
 ## Your job:
 - Improve the content only where needed

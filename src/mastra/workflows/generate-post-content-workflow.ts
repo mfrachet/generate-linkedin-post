@@ -2,6 +2,7 @@ import { createStep, createWorkflow } from "@mastra/core/workflows";
 import { z } from "zod";
 import { userPostPrompt } from "../prompts/user-post-prompt";
 import { postGuardPrompt } from "../prompts/post-guard-prompt";
+import { POST_SCORE_THRESHOLD } from "./constants";
 
 const generatePostContent = createStep({
   id: "generate-post-content",
@@ -9,17 +10,23 @@ const generatePostContent = createStep({
   inputSchema: z.object({
     outline: z.string(),
     score: z.number().optional().default(0),
+    scoreReasoning: z.string().optional().default(""),
   }),
   outputSchema: z.object({
     post: z.string(),
     score: z.number(),
+    scoreReasoning: z.string(),
   }),
   execute: async ({ inputData, mastra }) => {
     const agent = mastra.getAgentById("post-generator-agent");
 
     const result = await agent.generate(userPostPrompt(inputData.outline));
 
-    return { post: result.text, score: inputData.score ?? 0 };
+    return {
+      post: result.text,
+      score: inputData.score ?? 0,
+      scoreReasoning: inputData.scoreReasoning ?? "",
+    };
   },
 });
 
@@ -29,17 +36,30 @@ const postGuard = createStep({
   inputSchema: z.object({
     post: z.string(),
     score: z.number(),
+    scoreReasoning: z.string(),
   }),
   outputSchema: z.object({
     post: z.string(),
     score: z.number(),
+    scoreReasoning: z.string(),
   }),
   execute: async ({ inputData, mastra }) => {
     const agent = mastra.getAgentById("post-guard-agent");
 
-    const result = await agent.generate(postGuardPrompt(inputData.post));
+    const result = await agent.generate(
+      postGuardPrompt(
+        inputData.post,
+        inputData.score,
+        POST_SCORE_THRESHOLD,
+        inputData.scoreReasoning
+      )
+    );
 
-    return { post: result.text, score: inputData.score };
+    return {
+      post: result.text,
+      score: inputData.score,
+      scoreReasoning: inputData.scoreReasoning,
+    };
   },
 });
 
@@ -48,6 +68,7 @@ const generatePostContentWorkflow = createWorkflow({
   inputSchema: z.object({
     outline: z.string(),
     score: z.number().optional().default(0),
+    scoreReasoning: z.string().optional().default(""),
   }),
   outputSchema: z.object({
     post: z.string(),
