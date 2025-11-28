@@ -21,7 +21,14 @@ const generatePostContent = createStep({
   execute: async ({ inputData, mastra }) => {
     const agent = mastra.getAgentById("post-generator-agent");
 
-    const result = await agent.generate(userPostPrompt(inputData.outline));
+    const result = await agent.generate(
+      userPostPrompt(
+        inputData.outline,
+        inputData.score,
+        POST_SCORE_THRESHOLD,
+        inputData.scoreReasoning
+      )
+    );
 
     return {
       post: result.text,
@@ -51,14 +58,7 @@ const postGuard = createStep({
     const agent = mastra.getAgentById("post-guard-agent");
     const scorer = mastra.getScorerById("editor-in-chief-scorer");
 
-    const result = await agent.generate(
-      postGuardPrompt(
-        inputData.post,
-        inputData.score,
-        POST_SCORE_THRESHOLD,
-        inputData.scoreReasoning
-      )
-    );
+    const result = await agent.generate(postGuardPrompt(inputData.post));
 
     const newScore = await scorer.run({
       input: [{ role: "user", content: inputData.post }],
