@@ -1,11 +1,12 @@
 import { userCtx } from "./user-ctx";
 
-export const listIdeaPrompt = (count: number) => `
+export const listIdeaPrompt = (count: number, language: string) => `
 ${userCtx}
 
 ## What You Receive
 You will receive:
 - **count** → the number of ideas I want
+- **language** → the language the ideas should be in
 - *(optional)* **tone** → the tone to reflect  
 - *(optional)* **expertise** → additional context or domain depth
 
@@ -33,4 +34,7 @@ Return the ideas as:
 
 Here is the number of ideas I want:
 ${count}
+
+Here is the language I want the ideas in:
+${language}
 `;
