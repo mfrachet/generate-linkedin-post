@@ -7,8 +7,8 @@ const generateNIdeas = createStep({
   id: "generate-n-ideas",
   description: "Generates n ideas from agent's knowledge base",
   inputSchema: z.object({
-    count: z.number(),
-    language: z.string(),
+    count: z.number().default(5),
+    language: z.string().default("french"),
   }),
   outputSchema: z.object({
     ideas: z.array(z.string()),
@@ -38,7 +38,8 @@ const postGeneratorWorkflowStep = createStep(postGeneratorWorkflow);
 const generateNIdeasWorkflow = createWorkflow({
   id: "generate-n-ideas-workflow",
   inputSchema: z.object({
-    count: z.number(),
+    count: z.number().default(5),
+    language: z.string().default("french"),
   }),
   outputSchema: z.string(),
 })
