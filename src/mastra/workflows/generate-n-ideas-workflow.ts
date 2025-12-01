@@ -8,22 +8,26 @@ const generateNIdeas = createStep({
   description: "Generates n ideas from agent's knowledge base",
   inputSchema: z.object({
     count: z.number(),
+    language: z.string(),
   }),
   outputSchema: z.object({
     ideas: z.array(z.string()),
   }),
   execute: async ({ inputData, mastra }) => {
     const agent = mastra.getAgentById("list-ideas-agent");
-    const result = await agent.generate(listIdeaPrompt(inputData.count), {
-      modelSettings: {
-        temperature: 0,
-      },
-      structuredOutput: {
-        schema: z.object({
-          ideas: z.array(z.string()),
-        }),
-      },
-    });
+    const result = await agent.generate(
+      listIdeaPrompt(inputData.count, inputData.language),
+      {
+        modelSettings: {
+          temperature: 0,
+        },
+        structuredOutput: {
+          schema: z.object({
+            ideas: z.array(z.string()),
+          }),
+        },
+      }
+    );
 
     return { ideas: result.object.ideas };
   },
