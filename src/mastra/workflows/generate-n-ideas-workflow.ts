@@ -9,7 +9,9 @@ const generateNIdeas = createStep({
   inputSchema: z.object({
     count: z.number(),
   }),
-  outputSchema: z.array(z.string()),
+  outputSchema: z.object({
+    ideas: z.array(z.string()),
+  }),
   execute: async ({ inputData, mastra }) => {
     const agent = mastra.getAgentById("list-ideas-agent");
     const result = await agent.generate(listIdeaPrompt(inputData.count), {
@@ -23,7 +25,7 @@ const generateNIdeas = createStep({
       },
     });
 
-    return result.object.ideas;
+    return { ideas: result.object.ideas };
   },
 });
 
@@ -37,7 +39,7 @@ const generateNIdeasWorkflow = createWorkflow({
   outputSchema: z.string(),
 })
   .then(generateNIdeas)
-  .map(async ({ inputData }) => inputData.map((idea) => ({ idea })))
+  .map(async ({ inputData }) => inputData.ideas.map((idea) => ({ idea })))
   .foreach(postGeneratorWorkflowStep)
   .map(async ({ inputData }) =>
     inputData

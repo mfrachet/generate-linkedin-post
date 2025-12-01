@@ -59,7 +59,8 @@ const postGeneratorWorkflow = createWorkflow({
   .dountil(generatePostContentWorkflow, async ({ inputData: { score } }) => {
     console.log("score", score);
     return score >= POST_SCORE_THRESHOLD;
-  });
+  })
+  .map(async ({ inputData }) => inputData.post);
 
 postGeneratorWorkflow.commit();
 
