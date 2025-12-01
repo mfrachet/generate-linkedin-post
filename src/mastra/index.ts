@@ -10,6 +10,7 @@ import { postOutlineCreationAgent } from "./agents/post-outline-creation-agent";
 import { postGuardAgent } from "./agents/post-guard-agent";
 import { editorInChiefScorer } from "./scorers/editor-in-chief";
 import { generatePostContentWorkflow } from "./workflows/generate-post-content-workflow";
+import { listIdeasAgent } from "./agents/list-ideas-agent";
 
 export const mastra = new Mastra({
   workflows: { postGeneratorWorkflow, generatePostContentWorkflow },
@@ -18,6 +19,7 @@ export const mastra = new Mastra({
     postGeneratorAgent,
     postOutlineCreationAgent,
     postGuardAgent,
+    listIdeasAgent,
   },
   scorers: { editorInChiefScorer },
   storage: new LibSQLStore({
