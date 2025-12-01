@@ -16,7 +16,11 @@ const generatePostIdea = createStep({
   }),
   execute: async ({ inputData, mastra }) => {
     const agent = mastra.getAgentById("post-brief-generator-agent");
-    const result = await agent.generate(userBriefPrompt(inputData.idea));
+    const result = await agent.generate(userBriefPrompt(inputData.idea), {
+      modelSettings: {
+        temperature: 0,
+      },
+    });
 
     return { brief: result.text };
   },
@@ -33,7 +37,11 @@ const generatePostOutline = createStep({
   }),
   execute: async ({ inputData, mastra }) => {
     const agent = mastra.getAgentById("post-outline-creation-agent");
-    const result = await agent.generate(userOutlinePrompt(inputData.brief));
+    const result = await agent.generate(userOutlinePrompt(inputData.brief), {
+      modelSettings: {
+        temperature: 0,
+      },
+    });
 
     return { outline: result.text };
   },

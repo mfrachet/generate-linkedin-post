@@ -28,7 +28,11 @@ const generatePostContent = createStep({
       inputData.scoreReasoning
     );
 
-    const result = await agent.generate(prompt);
+    const result = await agent.generate(prompt, {
+      modelSettings: {
+        temperature: 0,
+      },
+    });
 
     return {
       post: result.text,
@@ -58,7 +62,11 @@ const postGuard = createStep({
     const agent = mastra.getAgentById("post-guard-agent");
     const scorer = mastra.getScorerById("editor-in-chief-scorer");
 
-    const result = await agent.generate(postGuardPrompt(inputData.post));
+    const result = await agent.generate(postGuardPrompt(inputData.post), {
+      modelSettings: {
+        temperature: 0,
+      },
+    });
 
     const newScore = await scorer.run({
       input: [{ role: "user", content: inputData.post }],
