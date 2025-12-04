@@ -23,7 +23,6 @@
     "@mastra/loggers": "^1.0.0-beta.1",
     "@mastra/memory": "^1.0.0-beta.3",
     "@mastra/observability": "^1.0.0-beta.2",
-    "simple-git": "^3.30.0",
     "zod": "^4.1.13"
   },
   "devDependencies": {
