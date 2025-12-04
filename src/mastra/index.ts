@@ -14,6 +14,9 @@ import { listIdeasAgent } from "./agents/list-ideas-agent";
 import { generateNIdeasWorkflow } from "./workflows/generate-n-ideas-workflow";
 
 export const mastra = new Mastra({
+  bundler: {
+    externals: ["supports-color"],
+  },
   workflows: {
     postGeneratorWorkflow,
     generatePostContentWorkflow,
