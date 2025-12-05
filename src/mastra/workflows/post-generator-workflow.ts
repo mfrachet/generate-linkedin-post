@@ -52,7 +52,9 @@ const postGeneratorWorkflow = createWorkflow({
   inputSchema: z.object({
     idea: z.string(),
   }),
-  outputSchema: z.string(),
+  outputSchema: z.object({
+    post: z.string(),
+  }),
 })
   .then(generatePostIdea)
   .then(generatePostOutline)

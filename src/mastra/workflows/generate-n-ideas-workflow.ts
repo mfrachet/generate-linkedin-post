@@ -49,7 +49,7 @@ const generateNIdeasWorkflow = createWorkflow({
   .map(async ({ inputData }) =>
     inputData
       .map(
-        (post, index) => `Idea ${index + 1}:
+        ({ post }, index) => `Idea ${index + 1}:
   
   ${post}\n\n--------------------------------`
       )
