@@ -11,12 +11,14 @@ const generatePostContent = createStep({
     outline: z.string(),
     score: z.number().optional().default(0),
     scoreReasoning: z.string().optional().default(""),
+    count: z.number(),
   }),
   outputSchema: z.object({
     outline: z.string(),
     post: z.string(),
     score: z.number(),
     scoreReasoning: z.string(),
+    count: z.number(),
   }),
   execute: async ({ inputData, mastra }) => {
     const agent = mastra.getAgentById("post-generator-agent");
@@ -39,6 +41,7 @@ const generatePostContent = createStep({
       score: inputData.score ?? 0,
       scoreReasoning: inputData.scoreReasoning ?? "",
       outline: inputData.outline,
+      count: inputData.count,
     };
   },
 });
@@ -51,14 +54,17 @@ const postGuard = createStep({
     post: z.string(),
     score: z.number(),
     scoreReasoning: z.string(),
+    count: z.number(),
   }),
   outputSchema: z.object({
     outline: z.string(),
     post: z.string(),
     score: z.number(),
     scoreReasoning: z.string(),
+    count: z.number(),
   }),
   execute: async ({ inputData, mastra }) => {
+    const logger = mastra.getLogger();
     const agent = mastra.getAgentById("post-guard-agent");
     const scorer = mastra.getScorerById("editor-in-chief-scorer");
 
@@ -77,13 +83,17 @@ const postGuard = createStep({
       (newScore.analyzeStepResult as unknown as { justification: string })
         ?.justification ?? "";
 
-    console.log("justification", justification);
+    logger.info(`[Post Score] ${newScore.score}
+          
+          ${justification}
+          `);
 
     return {
       post: result.text,
       score: newScore.score as number,
       scoreReasoning: justification,
       outline: inputData.outline,
+      count: inputData.count,
     };
   },
 });
@@ -94,11 +104,13 @@ const generatePostContentWorkflow = createWorkflow({
     outline: z.string(),
     score: z.number().optional().default(0),
     scoreReasoning: z.string().optional().default(""),
+    count: z.number().optional().default(0),
   }),
   outputSchema: z.object({
     outline: z.string(),
     post: z.string(),
     score: z.number(),
+    count: z.number(),
   }),
 })
   .then(generatePostContent)

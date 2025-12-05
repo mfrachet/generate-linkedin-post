@@ -3,7 +3,7 @@ import { z } from "zod";
 import { generatePostContentWorkflow } from "./generate-post-content-workflow";
 import { userBriefPrompt } from "../prompts/user-brief-prompt";
 import { userOutlinePrompt } from "../prompts/user-outline-prompt";
-import { POST_SCORE_THRESHOLD } from "./constants";
+import { GENERATION_ATTEMPTS_COUNT, POST_SCORE_THRESHOLD } from "./constants";
 
 const generatePostIdea = createStep({
   id: "generate-post-idea",
@@ -58,10 +58,13 @@ const postGeneratorWorkflow = createWorkflow({
 })
   .then(generatePostIdea)
   .then(generatePostOutline)
-  .dountil(generatePostContentWorkflow, async ({ inputData: { score } }) => {
-    console.log("score", score);
-    return score >= POST_SCORE_THRESHOLD;
-  })
+  .dountil(
+    generatePostContentWorkflow,
+    async ({ inputData: { score, count } }) => {
+      if (count >= GENERATION_ATTEMPTS_COUNT) return false;
+      return score >= POST_SCORE_THRESHOLD;
+    }
+  )
   .map(async ({ inputData }) => inputData.post);
 
 postGeneratorWorkflow.commit();

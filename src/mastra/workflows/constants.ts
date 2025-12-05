@@ -1,1 +1,2 @@
 export const POST_SCORE_THRESHOLD = 0.95;
+export const GENERATION_ATTEMPTS_COUNT = 5;
