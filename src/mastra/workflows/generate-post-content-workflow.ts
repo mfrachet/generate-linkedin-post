@@ -83,9 +83,11 @@ const postGuard = createStep({
       (newScore.analyzeStepResult as unknown as { justification: string })
         ?.justification ?? "";
 
-    logger.info(`[Post Score] ${newScore.score}
-          
-          ${justification}
+    logger.info(`[[POST GENERATION]]
+
+[Score]: ${newScore.score}
+[Attempt]: ${inputData.count}
+[Justification]: ${justification}
           `);
 
     return {
