@@ -12,6 +12,7 @@ import { editorInChiefScorer } from "./scorers/editor-in-chief";
 import { generatePostContentWorkflow } from "./workflows/generate-post-content-workflow";
 import { listIdeasAgent } from "./agents/list-ideas-agent";
 import { generateNIdeasWorkflow } from "./workflows/generate-n-ideas-workflow";
+import { generatePostFromIdea } from "./workflows/generate-post-from-idea";
 
 export const mastra = new Mastra({
   bundler: {
@@ -21,6 +22,7 @@ export const mastra = new Mastra({
     postGeneratorWorkflow,
     generatePostContentWorkflow,
     generateNIdeasWorkflow,
+    generatePostFromIdea,
   },
   agents: {
     postBriefGeneratorAgent,
