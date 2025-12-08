@@ -34,6 +34,25 @@ const generateNIdeas = createStep({
 });
 
 const postGeneratorWorkflowStep = createStep(postGeneratorWorkflow);
+const formatSteps = createStep({
+  id: "format-steps",
+  description: "Formats the steps into a string",
+  inputSchema: z.array(
+    z.object({
+      post: z.string(),
+    })
+  ),
+  outputSchema: z.string(),
+  execute: async ({ inputData }) => {
+    return inputData
+      .map(
+        ({ post }, index) => `Idea ${index + 1}:
+
+${post}\n\n--------------------------------`
+      )
+      .join("\n\n");
+  },
+});
 
 const generateNIdeasWorkflow = createWorkflow({
   id: "generate-n-ideas-workflow",
@@ -46,15 +65,7 @@ const generateNIdeasWorkflow = createWorkflow({
   .then(generateNIdeas)
   .map(async ({ inputData }) => inputData.ideas.map((idea) => ({ idea })))
   .foreach(postGeneratorWorkflowStep)
-  .map(async ({ inputData }) =>
-    inputData
-      .map(
-        ({ post }, index) => `Idea ${index + 1}:
-  
-  ${post}\n\n--------------------------------`
-      )
-      .join("\n\n")
-  );
+  .then(formatSteps);
 
 generateNIdeasWorkflow.commit();
 
