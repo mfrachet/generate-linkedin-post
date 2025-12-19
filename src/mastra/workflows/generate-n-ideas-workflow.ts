@@ -14,6 +14,7 @@ const generateNIdeas = createStep({
     ideas: z.array(z.string()),
   }),
   execute: async ({ inputData, mastra }) => {
+    const logger = mastra.getLogger();
     const agent = mastra.getAgentById("list-ideas-agent");
     const result = await agent.generate(
       listIdeaPrompt(inputData.count, inputData.language),
@@ -28,6 +29,9 @@ const generateNIdeas = createStep({
         },
       }
     );
+
+    console.log("Console log: ", result.object.ideas);
+    logger.info("Logger log: ", result.object.ideas);
 
     return { ideas: result.object.ideas };
   },
